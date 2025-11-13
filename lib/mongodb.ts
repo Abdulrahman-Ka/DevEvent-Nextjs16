@@ -1,15 +1,5 @@
 import mongoose from "mongoose";
 
-// Define the MongoDB connection string type
-const MONGODB_URI = process.env.MONGODB_URI;
-
-// Throw an error if the connection string is not defined
-if (!MONGODB_URI) {
-  throw new Error(
-    "Please define the MONGODB_URI environment variable inside .env.local"
-  );
-}
-
 // Define the cached connection interface with proper types
 interface CachedConnection {
   conn: typeof mongoose | null;
@@ -45,12 +35,21 @@ async function connectDB(): Promise<typeof mongoose> {
 
   // If a connection promise doesn't exist, create one
   if (!cached.promise) {
+    const MONGODB_URI = process.env.MONGODB_URI;
+
+    // Throw an error if the connection string is not defined
+    if (!MONGODB_URI) {
+      throw new Error(
+        "Please define the MONGODB_URI environment variable inside .env.local"
+      );
+    }
+
     const options = {
       bufferCommands: false, // Disable command buffering to avoid potential issues
     };
 
     cached.promise = mongoose
-      .connect(MONGODB_URI as string, options)
+      .connect(MONGODB_URI, options)
       .then((mongoose) => {
         return mongoose;
       });
