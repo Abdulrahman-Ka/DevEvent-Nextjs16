@@ -48,11 +48,9 @@ async function connectDB(): Promise<typeof mongoose> {
       bufferCommands: false, // Disable command buffering to avoid potential issues
     };
 
-    cached.promise = mongoose
-      .connect(MONGODB_URI, options)
-      .then((mongoose) => {
-        return mongoose;
-      });
+    cached.promise = mongoose.connect(MONGODB_URI, options).then((mongoose) => {
+      return mongoose;
+    });
   }
 
   try {

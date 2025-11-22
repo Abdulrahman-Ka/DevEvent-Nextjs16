@@ -98,7 +98,7 @@ const EventSchema = new Schema<IEvent>(
       type: String,
       required: [true, "Organizer is required"],
       trim: true,
-      maxlength: [100, "Organizer cannot exceed 100 characters"],
+      maxlength: [200, "Organizer cannot exceed 200 characters"],
     },
     tags: {
       type: [String],
