@@ -1,26 +1,50 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
-import { events } from "@/lib/constants";
+import { IEvent } from "@/database";
+import { cacheLife } from "next/cache";
 
-const page = () => {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const page = async () => {
+  "use cache";
+  cacheLife("hours");
+
+  const response = await fetch(`${BASE_URL}/api/events`);
+  const { events } = await response.json();
+
   return (
-    <section>
-      <h1 className="text-center">
-        The Hub for Every Dev <br /> Event You Can&apos;t Miss
-      </h1>
-      <p className="text-center mt-5">
-        Hackathons, Meetups, and Conferneces, All in One Place.
-      </p>
-      <ExploreBtn />
+    <section id="home" className="flex flex-col items-center gap-10">
+      <header className="flex flex-col items-center gap-4 text-center max-w-2xl ">
+        <h1>
+          The Hub for Every Dev
+          <br />
+          Event You Can&apos;t Miss
+        </h1>
+        <p className="subheading">
+          Hackathons, meetups, and conferences — all in one place.
+        </p>
+        <ExploreBtn />
+      </header>
 
-      <div className="mt-20 space-y-7">
-        <h3>Featured Events</h3>
-        <ol className="events">
-          {events.map((event) => (
-            <li key={event.title}>{<EventCard {...event} />}</li>
-          ))}
-        </ol>
-      </div>
+      <section className="w-full mt-10 space-y-6">
+        <div className="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start">
+          <h3>Featured events</h3>
+          <p className="text-sm text-light-200">
+            Curated highlights from the community. Discover what&apos;s
+            happening next.
+          </p>
+        </div>
+
+        <ul className="events">
+          {events &&
+            events.length > 0 &&
+            events.map((event: IEvent) => (
+              <li key={event.title} className="list-none">
+                <EventCard {...event} />
+              </li>
+            ))}
+        </ul>
+      </section>
     </section>
   );
 };
